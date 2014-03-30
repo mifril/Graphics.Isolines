@@ -45,7 +45,6 @@ public class Interpolator {
 
         int oldPixel = 0;
         int newPixel = 0;
-        //int quantError = 0;
         int [] colorsRGB = new int[colors.length];
         int [] quantError = new int[3];
 
@@ -57,12 +56,8 @@ public class Interpolator {
             for (int x = 1; x < width - 1; ++x) {
                 oldPixel = image.getRGB(x, y);
                 newPixel = findNearestColor(oldPixel, colorsRGB);
-                //quantError = 0;
-                int colorComponent = 0;
 
                 for (int i = 0; i < 3; ++i) {
-                    colorComponent = (((oldPixel >> i*8) & 0xFF) - ((newPixel >> i*8) & 0xFF));
-                    //quantError |= (colorComponent << i*8);
                     quantError[i] = (((oldPixel >> i*8) & 0xFF) - ((newPixel >> i*8) & 0xFF));
                 }
 
