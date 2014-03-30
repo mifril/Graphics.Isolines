@@ -45,8 +45,9 @@ public class Interpolator {
 
         int oldPixel = 0;
         int newPixel = 0;
-        int quantError = 0;
-        int[] colorsRGB = new int[colors.length];
+        //int quantError = 0;
+        int [] colorsRGB = new int[colors.length];
+        int [] quantError = new int[3];
 
         for (int i = 0; i < colors.length; ++i) {
             colorsRGB[i] = colors[i].getRGB();
@@ -56,28 +57,33 @@ public class Interpolator {
             for (int x = 1; x < width - 1; ++x) {
                 oldPixel = image.getRGB(x, y);
                 newPixel = findNearestColor(oldPixel, colorsRGB);
-                quantError = 0;
+                //quantError = 0;
                 int colorComponent = 0;
+
                 for (int i = 0; i < 3; ++i) {
                     colorComponent = (((oldPixel >> i*8) & 0xFF) - ((newPixel >> i*8) & 0xFF));
-                    quantError |= (colorComponent << i*8);
+                    //quantError |= (colorComponent << i*8);
+                    quantError[i] = (((oldPixel >> i*8) & 0xFF) - ((newPixel >> i*8) & 0xFF));
                 }
 
                 image.setRGB(x, y, newPixel);
-                image.setRGB(x + 1, y + 0, (changeColor(image.getRGB(x + 1, y + 0), quantError, 7)));
-                image.setRGB(x - 1, y + 1, (changeColor(image.getRGB(x - 1, y + 1), quantError, 3)));
-                image.setRGB(x + 0, y + 1, (changeColor(image.getRGB(x + 0, y + 1), quantError, 5)));
-                image.setRGB(x + 1, y + 1, (changeColor(image.getRGB(x + 1, y + 1), quantError, 1)));
+                image.setRGB(x + 1, y + 0, (changeColor(image.getRGB(x + 1, y + 0), quantError, 7.0/16)));
+                image.setRGB(x - 1, y + 1, (changeColor(image.getRGB(x - 1, y + 1), quantError, 3.0/16)));
+                image.setRGB(x + 0, y + 1, (changeColor(image.getRGB(x + 0, y + 1), quantError, 5.0/16)));
+                image.setRGB(x + 1, y + 1, (changeColor(image.getRGB(x + 1, y + 1), quantError, 1.0/16)));
             }
         }
     }
 
 
-    private int changeColor(int color, int quantError, int factor) {
+    private int changeColor(int color, int [] quantError, double factor) {
             int colorComponent = 0;
             int newColor = 0;
             for (int i = 0; i < 3; ++i) {
-                colorComponent = (int)Math.round(((color >> i*8) & 0xFF) + ((quantError >> i*8) & 0xFF) * (factor / 16.0));
+                colorComponent = (((color >> i*8) & 0xFF) + (int)((quantError[i] * factor)));
+                if (colorComponent < 0) {
+                    colorComponent = 0;
+                }
                 newColor |= (colorComponent << i*8);
             }
             return newColor;
