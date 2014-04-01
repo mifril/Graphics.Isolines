@@ -27,7 +27,7 @@ public class MapFunction implements Function {
     }
 
     public double findValue(double x, double y) {
-        return (Math.sin(x) + Math.cos(y));//(x*x*x - x*x*y - 2*x*y - 3*y + 4*x + 12);
+        return (Math.sin(x) + Math.cos(y));
     }
 
     public double getA() {

@@ -60,18 +60,18 @@ public class PaintController {
         int gridWidth = model.getGridWidth() - 1;
         // -//-
         int gridHeight = model.getGridHeight() - 1;
-        double offsetX = imageWidth / (gridWidth);
-        double offsetY = imageHeight / (gridHeight);
+        double deltaX = imageWidth / (gridWidth);
+        double deltaY = imageHeight / (gridHeight);
 
-        for (int y = 0; y < imageHeight; y += offsetY) {
-            if (y > imageHeight - offsetY) {
+        for (int y = 0; y < imageHeight; y += deltaY) {
+            if (y > imageHeight - deltaY) {
                 paintLine(image, gridColor, 0, imageHeight - 1, imageWidth - 1, imageHeight - 1);
             } else {
                 paintLine(image, gridColor, 0, y, imageWidth - 1, y);
             }
         }
-        for (int x = 0; x < imageWidth; x += offsetX) {
-            if (x > imageWidth - offsetX) {
+        for (int x = 0; x < imageWidth; x += deltaX) {
+            if (x > imageWidth - deltaX) {
                 paintLine(image, gridColor, imageWidth - 1, 0, imageWidth - 1, imageHeight - 1);
             } else {
                 paintLine(image, gridColor, x, 0, x, imageHeight - 1);
@@ -154,8 +154,8 @@ public class PaintController {
         int gridWidth = model.getGridWidth() - 1;
         // -//-
         int gridHeight = model.getGridHeight() - 1;
-        double offsetX = imageWidth / (gridWidth);
-        double offsetY = imageHeight / (gridHeight);
+        double deltaX = imageWidth / (gridWidth);
+        double deltaY = imageHeight / (gridHeight);
         double factorX = (function.getB() - function.getA()) / (imageWidth);
         double factorY = (function.getD() - function.getC()) / (imageHeight);
 
@@ -168,51 +168,52 @@ public class PaintController {
         int [] crossingPoints = new int[4];
         int count = 0;
 
-        for (int y = 0; y < imageHeight; y += offsetY) {
-            if (imageHeight - y < offsetY) {
+        for (int y = 0; y < imageHeight; y += deltaY) {
+            if (imageHeight - y < deltaY) {
                 break;
             }
 
-            for (int x = 0; x < imageWidth; x += offsetX) {
-                if (imageWidth - x < offsetX) {
+            for (int x = 0; x < imageWidth; x += deltaX) {
+                if (imageWidth - x < deltaX) {
                     break;
                 }
+
                 Arrays.fill(isCrossedBorder, true);
                 Arrays.fill(crossingPoints, -1);
                 valueNW = function.findValue(x * factorX, y * factorY);
-                valueNE = function.findValue((x + offsetX) * factorX, y * factorY);
-                valueSW = function.findValue(x * factorX, (y + offsetY) * factorY);
-                valueSE = function.findValue((x + offsetX) * factorX, (y + offsetY) * factorY);
+                valueNE = function.findValue((x + deltaX) * factorX, y * factorY);
+                valueSW = function.findValue(x * factorX, (y + deltaY) * factorY);
+                valueSE = function.findValue((x + deltaX) * factorX, (y + deltaY) * factorY);
 
-                if ((levelValue < valueNW && levelValue < valueNE)|| (levelValue > valueNW && levelValue > valueNE)) {
+                if ((levelValue < valueNW && levelValue < valueNE) || (levelValue > valueNW && levelValue > valueNE)) {
                     isCrossedBorder[0] = false;
                 } else {
                     double factor1 = (valueNE > valueNW) ? (levelValue - valueNW) : (levelValue - valueNE);
                     double factor2 = (valueNE > valueNW) ? (valueNE - valueNW) : (valueNW - valueNE);
-                    crossingPoints[0] = (int)Math.round(x + offsetX * factor1 / factor2);
+                    crossingPoints[0] = (int)Math.round(x + deltaX * factor1 / factor2);
                 }
-                if ((levelValue < valueSW && levelValue < valueSE)|| (levelValue > valueSW && levelValue > valueSE)) {
+                if ((levelValue < valueSW && levelValue < valueSE) || (levelValue > valueSW && levelValue > valueSE)) {
                     isCrossedBorder[1] = false;
                 } else {
                     double factor1 = (valueSE > valueSW) ? (levelValue - valueSW) : (levelValue - valueSE);
                     double factor2 = (valueSE > valueSW) ? (valueSE - valueSW) : (valueSW - valueSE);
-                    crossingPoints[1] = (int)Math.round(x + offsetX * factor1 / factor2);
+                    crossingPoints[1] = (int)Math.round(x + deltaX * factor1 / factor2);
                 }
 
 
-                if ((levelValue < valueNW && levelValue < valueSW)|| (levelValue > valueNW && levelValue > valueSW)) {
+                if ((levelValue < valueNW && levelValue < valueSW) || (levelValue > valueNW && levelValue > valueSW)) {
                     isCrossedBorder[2] = false;
                 } else {
                     double factor1 = (valueSW > valueNW) ? (levelValue - valueNW) : (levelValue - valueSW);
                     double factor2 = (valueSW > valueNW) ? (valueSW - valueNW) : (valueNW - valueSW);
-                    crossingPoints[2] = (int)Math.round(y + offsetY * factor1 / factor2);
+                    crossingPoints[2] = (int)Math.round(y + deltaY * factor1 / factor2);
                 }
-                if ((levelValue < valueNE && levelValue < valueSE)|| (levelValue > valueNE && levelValue > valueSE)) {
+                if ((levelValue < valueNE && levelValue < valueSE) || (levelValue > valueNE && levelValue > valueSE)) {
                     isCrossedBorder[3] = false;
                 } else {
                     double factor1 = (valueSE > valueNE) ? (levelValue - valueNE) : (levelValue - valueSE);
                     double factor2 = (valueSE > valueNE) ? (valueSE - valueNE) : (valueNE - valueSE);
-                    crossingPoints[3] = (int)Math.round(y + offsetY * factor1 / factor2);
+                    crossingPoints[3] = (int)Math.round(y + deltaY * factor1 / factor2);
                 }
 
                 count = countCrossedBorders(isCrossedBorder);
@@ -231,7 +232,7 @@ public class PaintController {
                         }
                         if (isCrossedBorder[1]) {
                             pointsX[index] = crossingPoints[1];
-                            pointsY[index] = (int)Math.round(y + offsetY);
+                            pointsY[index] = (int)Math.round(y + deltaY);
                             ++index;
                         }
                         if (isCrossedBorder[2]) {
@@ -240,32 +241,32 @@ public class PaintController {
                             ++index;
                         }
                         if (isCrossedBorder[3]) {
-                            pointsX[index] = (int)Math.round(x + offsetX);
+                            pointsX[index] = (int)Math.round(x + deltaX);
                             pointsY[index] = crossingPoints[3];
                             ++index;
                         }
 
                         for (int i = 0; i < pointsX.length; ++i) {
-                            if (pointsX[i] == imageWidth) {
-                                --pointsX[i];
+                            if (pointsX[i] >= imageWidth) {
+                                pointsX[i] = imageWidth - 1;
                             }
-                            if (pointsY[i] == imageHeight) {
-                                --pointsY[i];
+                            if (pointsY[i] >= imageHeight) {
+                                pointsY[i] = imageHeight - 1;
                             }
                         }
                         paintLine(image, isolineColor, pointsX[0], pointsY[0], pointsX[1], pointsY[1]);
                         break;
                     case 4:
-                        boolean isCenterBigger = (function.findValue(x + offsetX / 2, y + offsetY / 2) > levelValue);
+                        boolean isCenterBigger = (function.findValue(x + deltaX / 2, y + deltaY / 2) > levelValue);
                         if (isCenterBigger) {
                             paintLine(image, isolineColor, crossingPoints[0], y,
-                                    (int)Math.round(x + offsetX), crossingPoints[3]);
-                            paintLine(image, isolineColor, crossingPoints[1], (int)Math.round(y + offsetY),
+                                    (int)Math.round(x + deltaX), crossingPoints[3]);
+                            paintLine(image, isolineColor, crossingPoints[1], (int)Math.round(y + deltaY),
                                     x, crossingPoints[2]);
                         } else {
                             paintLine(image, isolineColor, crossingPoints[0], y, x, crossingPoints[2]);
-                            paintLine(image, isolineColor, crossingPoints[1], (int)Math.round(y + offsetY),
-                                    (int)Math.round(x + offsetX), crossingPoints[3]);
+                            paintLine(image, isolineColor, crossingPoints[1], (int)Math.round(y + deltaY),
+                                    (int)Math.round(x + deltaX), crossingPoints[3]);
                         }
                         break;
                     default:
@@ -317,7 +318,7 @@ public class PaintController {
 
         image.setRGB(currX, currY, color);
 
-        for (int i = 1; i < deltaError; ++i) {
+        for (int i = 1; i <= deltaError; ++i) {
             error -= fixingDeltaError;
             if (error < 0) {
                 error += deltaError;
