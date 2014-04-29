@@ -185,35 +185,36 @@ public class PaintController {
                 valueSW = function.findValue(x * factorX, (y + deltaY) * factorY);
                 valueSE = function.findValue((x + deltaX) * factorX, (y + deltaY) * factorY);
 
+
                 if ((levelValue < valueNW && levelValue < valueNE) || (levelValue > valueNW && levelValue > valueNE)) {
                     isCrossedBorder[0] = false;
                 } else {
-                    double factor1 = (valueNE > valueNW) ? (levelValue - valueNW) : (levelValue - valueNE);
-                    double factor2 = (valueNE > valueNW) ? (valueNE - valueNW) : (valueNW - valueNE);
-                    crossingPoints[0] = (int)Math.round(x + deltaX * factor1 / factor2);
+                    double factor1 = levelValue - valueNW;//(valueNE > valueNW) ? (levelValue - valueNW) : (levelValue - valueNE);
+                    double factor2 = valueNE - valueNW;//(valueNE > valueNW) ? (valueNE - valueNW) : (valueNW - valueNE);
+                    crossingPoints[0] = (int)(x + deltaX * factor1 / factor2);
                 }
                 if ((levelValue < valueSW && levelValue < valueSE) || (levelValue > valueSW && levelValue > valueSE)) {
                     isCrossedBorder[1] = false;
                 } else {
-                    double factor1 = (valueSE > valueSW) ? (levelValue - valueSW) : (levelValue - valueSE);
-                    double factor2 = (valueSE > valueSW) ? (valueSE - valueSW) : (valueSW - valueSE);
-                    crossingPoints[1] = (int)Math.round(x + deltaX * factor1 / factor2);
+                    double factor1 = levelValue - valueSW;//(valueSE > valueSW) ? (levelValue - valueSW) : (levelValue - valueSE);
+                    double factor2 = valueSE - valueSW;//(valueSE > valueSW) ? (valueSE - valueSW) : (valueSW - valueSE);
+                    crossingPoints[1] = (int)(x + deltaX * factor1 / factor2);
                 }
 
 
                 if ((levelValue < valueNW && levelValue < valueSW) || (levelValue > valueNW && levelValue > valueSW)) {
                     isCrossedBorder[2] = false;
                 } else {
-                    double factor1 = (valueSW > valueNW) ? (levelValue - valueNW) : (levelValue - valueSW);
-                    double factor2 = (valueSW > valueNW) ? (valueSW - valueNW) : (valueNW - valueSW);
-                    crossingPoints[2] = (int)Math.round(y + deltaY * factor1 / factor2);
+                    double factor1 = levelValue - valueSW;//(valueNW > valueSW) ? (levelValue - valueSW) : (levelValue - valueNW);
+                    double factor2 = valueNW - valueSW;//(valueNW > valueSW) ? (valueNW - valueSW) : (valueSW - valueNW);
+                    crossingPoints[2] = (int)(y + deltaY - deltaY * factor1 / factor2);
                 }
                 if ((levelValue < valueNE && levelValue < valueSE) || (levelValue > valueNE && levelValue > valueSE)) {
                     isCrossedBorder[3] = false;
                 } else {
-                    double factor1 = (valueSE > valueNE) ? (levelValue - valueNE) : (levelValue - valueSE);
-                    double factor2 = (valueSE > valueNE) ? (valueSE - valueNE) : (valueNE - valueSE);
-                    crossingPoints[3] = (int)Math.round(y + deltaY * factor1 / factor2);
+                    double factor1 = levelValue - valueSE;//(valueNE > valueSE) ? (levelValue - valueSE) : (levelValue - valueNE);
+                    double factor2 = valueNE - valueSE;//(valueNE > valueSE) ? (valueNE - valueSE) : (valueSE - valueNE);
+                    crossingPoints[3] = (int)(y + deltaY - deltaY * factor1 / factor2);
                 }
 
                 count = countCrossedBorders(isCrossedBorder);
